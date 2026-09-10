@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aax2text"
+version = "0.1.0"
+description = "Convert Audible .aax / .aaxc audiobooks you own into plain-text transcripts (DRM key recovery + lossless decrypt + local faster-whisper transcription)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "ken8522" }]
+keywords = ["audible", "aax", "aaxc", "transcription", "whisper", "audiobook"]
+
+# Core runtime deps. ffmpeg/ffprobe are EXTERNAL binaries (install via apt/brew/static
+# build) and are intentionally not Python packages.
+dependencies = [
+    "faster-whisper>=1.0.0",
+]
+
+[project.optional-dependencies]
+# Browser GUI (localhost only).
+gui = ["Flask>=3.0"]
+# Development / testing.
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+aax2text = "aax2text.cli:main"
+
+[tool.setuptools]
+packages = ["aax2text"]
+
+# Note: the native brute-force cracker (native/aax_crack.c) is compiled on demand
+# from the repository checkout; run the tool from a clone (see README). If not
+# present (e.g. an isolated install), use --activation-bytes or --method rainbow.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

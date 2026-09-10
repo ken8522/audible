@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+
+# Native build artifact (compiled on demand)
+native/aax_crack*
+*.o
+
+# Audiobook inputs / intermediates / outputs — never commit copyrighted audio or
+# your personal activation bytes.
+*.aax
+*.aaxc
+*.voucher
+*.m4a
+*.m4b
+*.wav
+*.mp3
+out/
+output/
+*.txt.transcript
+
+# Whisper model cache
+models/
+
+# OS cruft
+.DS_Store
+Thumbs.db

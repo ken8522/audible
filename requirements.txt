@@ -1,0 +1,13 @@
+# Core runtime dependency.
+faster-whisper>=1.0.0
+
+# Optional: browser GUI (`aax2text gui`). Uncomment or `pip install flask`.
+# Flask>=3.0
+
+# Optional: running the test suite.
+# pytest>=7.0
+
+# NOTE: ffmpeg and ffprobe are NOT Python packages. Install them separately:
+#   Debian/Ubuntu : sudo apt-get install ffmpeg
+#   macOS (brew)  : brew install ffmpeg
+#   Windows       : winget install Gyan.FFmpeg   (or download a static build)
