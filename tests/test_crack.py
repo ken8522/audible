@@ -61,5 +61,26 @@ def test_native_crack_small_window():
 
 @pytest.mark.skipif(not crack.have_compiler(), reason="no C compiler available")
 def test_native_build_selftest():
+    import subprocess
+
     binpath = crack.build()
     assert binpath.is_file()
+    # The binary self-tests the auto-selected backend and reports which it chose.
+    out = subprocess.run([str(binpath), "--selftest"], capture_output=True, text=True)
+    assert out.returncode == 0 and out.stdout.startswith("ok")
+
+
+@pytest.mark.skipif(not crack.have_compiler(), reason="no C compiler available")
+def test_native_backends_agree():
+    """Both the scalar and the auto-selected (SHA-NI where available) backends
+    must recover the same known activation bytes."""
+    import subprocess
+
+    binpath = str(crack.build())
+    target = 0x1234ABCD
+    cs = crack.compute_checksum(target)
+    window = ["--start", "12340000", "--end", "1234ffff", "--quiet"]
+    for extra in ([], ["--scalar"]):
+        out = subprocess.run([binpath, cs, *window, *extra], capture_output=True, text=True)
+        assert out.returncode == 0
+        assert out.stdout.strip() == f"{target:08x}"

@@ -131,9 +131,14 @@ the file (and printed by `ffprobe`) using SHA-1 only. This tool reproduces that
 check and searches all 2³² possibilities offline:
 
 - **`--method brute`** (default when a compiler is present): compiles a small
-  multithreaded C searcher (`native/aax_crack.c`) and scans the whole space. On a
-  4-core machine this takes roughly **20 minutes**; it scales with cores (≈5–10 min
-  on 8–16 cores). You only do this **once per account** — the bytes are reusable.
+  multithreaded C searcher (`native/aax_crack.c`) and scans the whole space. It has
+  two SHA-1 backends — a portable scalar one and a hardware-accelerated **SHA-NI**
+  one — and **calibrates at startup to use whichever is actually faster on your
+  machine** (so it picks hardware SHA-NI on modern CPUs, and never the slow
+  emulated path some virtual machines expose). On a modern multi-core desktop with
+  hardware SHA this is typically **a few minutes**; without SHA acceleration, budget
+  ~20 min on 4 cores. Either way you only do it **once per account** — the bytes are
+  reusable for every book. (`native/aax_crack --bench` prints each backend's speed.)
 - **`--method rainbow --tables <dir>`**: near-instant, if you already have the
   [inAudible-NG rainbow tables](https://github.com/inAudible-NG/tables) and `rcrack`
   on your PATH.
