@@ -94,6 +94,21 @@ for every book on your account, so next time you can skip cracking:
 aax2text convert "AnotherBook.aax" --activation-bytes 1a2b3c4d --model small
 ```
 
+### Already have an M4B / M4A / MP3 (no Audible lock)?
+
+If your file already plays in a normal player like **VLC**, it isn't DRM-locked, so there
+is nothing to crack or decrypt — the tool transcribes it straight to text. Just point
+`convert` at the file. Quote the whole path if it contains spaces or brackets:
+
+```powershell
+python -m aax2text.cli convert "Nonviolent Communication [B072LG72D3]\book.m4b" --model small --out .\out
+```
+
+You'll get `out\<Title>.txt`, split by chapter. `.m4a`, `.mp3`, and `.wav` work the same
+way. (Windows Media Player often can't open `.m4b`, but VLC can — that's a player
+limitation, not a lock. A file that only plays inside the Audible app *is* still locked;
+unlock it first with the AAX steps above.)
+
 ### Graphical interface
 
 ```bash

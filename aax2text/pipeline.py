@@ -123,10 +123,22 @@ def convert(
         return result
 
     status(f"Transcribing with faster-whisper ({model_size})… this is the slow part.")
-    tr = transcribe.transcribe_file(
-        media_path, model_size=model_size, device=device, language=language,
-        progress=transcribe_progress,
-    )
+    try:
+        tr = transcribe.transcribe_file(
+            media_path, model_size=model_size, device=device, language=language,
+            progress=transcribe_progress,
+        )
+    except (FileNotFoundError, RuntimeError):
+        # Clear, actionable messages (missing file / faster-whisper not installed) pass through.
+        raise
+    except Exception as exc:  # noqa: BLE001 - turn opaque decode errors into guidance
+        raise RuntimeError(
+            f"Could not read '{os.path.basename(media_path)}' as normal audio. "
+            "Make sure the file plays in a normal player like VLC. If it only plays "
+            "inside the Audible app it is still DRM-locked and must be unlocked first "
+            "(see the AAX/--crack steps). "
+            f"(technical detail: {exc})"
+        ) from exc
     result.language = tr.language
     result.duration = tr.duration
 
