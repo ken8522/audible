@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>aax2text Cheat Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#FBFCFD; --panel:#FFFFFF; --ink:#14181D; --muted:#5C6773;
+    --accent:#1F5FA6; --accent-ink:#0E3E70; --accent-soft:#E7F0FA;
+    --rule:#DCE3EB; --code-bg:#F1F5F9; --code-ink:#1B2530; --code-rule:#CBD6E2;
+    --tip-bg:#FBF1D6; --tip-rule:#E7CD84; --tip-ink:#4A3A12; --tip-label:#8A6A16;
+    --shadow:0 1px 2px rgba(20,24,29,.05), 0 10px 26px rgba(20,24,29,.05);
+    --font-display:"Bricolage Grotesque",system-ui,sans-serif;
+    --font-body:"IBM Plex Sans",system-ui,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,"Cascadia Code",Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0F1318; --panel:#161C23; --ink:#E8EDF3; --muted:#98A4B0;
+      --accent:#6FA8E6; --accent-ink:#BBD8F6; --accent-soft:#182838;
+      --rule:#2A323C; --code-bg:#0C1117; --code-ink:#D6E2EF; --code-rule:#28313C;
+      --tip-bg:#2A2410; --tip-rule:#5A4A1E; --tip-ink:#EBDBAA; --tip-label:#C9A94E;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0F1318; --panel:#161C23; --ink:#E8EDF3; --muted:#98A4B0;
+    --accent:#6FA8E6; --accent-ink:#BBD8F6; --accent-soft:#182838;
+    --rule:#2A323C; --code-bg:#0C1117; --code-ink:#D6E2EF; --code-rule:#28313C;
+    --tip-bg:#2A2410; --tip-rule:#5A4A1E; --tip-ink:#EBDBAA; --tip-label:#C9A94E;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px rgba(0,0,0,.35);
+  }
+
+  html{color-scheme:light dark}
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--font-body); font-size:15px; line-height:1.5;
+    padding:32px 18px 44px;
+  }
+  .sheet{max-width:760px; margin:0 auto}
+
+  .top{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:16px; flex-wrap:wrap; margin-bottom:22px;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); font-weight:600; margin:0 0 6px;
+  }
+  h1{
+    font-family:var(--font-display); font-weight:800; font-size:32px;
+    line-height:1.05; letter-spacing:-.015em; margin:0; text-wrap:balance;
+  }
+  .lede{color:var(--muted); margin:8px 0 0; max-width:52ch}
+  .controls{display:flex; gap:8px; flex-shrink:0}
+  .btn{
+    font:inherit; font-size:13px; font-weight:500; color:var(--ink);
+    background:var(--panel); border:1px solid var(--rule); border-radius:9px;
+    padding:7px 12px; cursor:pointer; line-height:1;
+  }
+  .btn:hover{border-color:var(--accent)}
+  .btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .steps{display:flex; flex-direction:column; gap:14px}
+  .step{
+    display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:start;
+    background:var(--panel); border:1px solid var(--rule); border-radius:14px;
+    padding:18px 20px; box-shadow:var(--shadow); break-inside:avoid;
+  }
+  .num{
+    font-family:var(--font-display); font-weight:800; font-size:17px;
+    width:34px; height:34px; border-radius:50%;
+    background:var(--accent); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .step h2{
+    font-family:var(--font-display); font-weight:700; font-size:18px;
+    margin:3px 0 0; letter-spacing:-.01em;
+  }
+  .step p{margin:8px 0 0}
+  .step p.hint{color:var(--muted); font-size:13.5px}
+
+  .cmd{
+    font-family:var(--font-mono); font-size:13.5px; color:var(--code-ink);
+    background:var(--code-bg); border:1px solid var(--code-rule);
+    border-left:3px solid var(--accent); border-radius:9px;
+    padding:11px 14px; margin-top:10px; overflow-x:auto; white-space:pre;
+  }
+  .cmd.wrap{white-space:pre-wrap; word-break:break-all}
+  .path{
+    font-family:var(--font-mono); font-size:13.5px; color:var(--accent-ink);
+    background:var(--accent-soft); border-radius:8px; padding:10px 14px;
+    margin-top:10px; overflow-x:auto; white-space:pre; font-weight:500;
+  }
+
+  .tip{
+    margin-top:12px; background:var(--tip-bg); border:1px solid var(--tip-rule);
+    border-radius:11px; padding:12px 15px;
+  }
+  .tip .tag{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:.13em;
+    text-transform:uppercase; font-weight:600; color:var(--tip-label);
+    display:block; margin-bottom:3px;
+  }
+  .tip p{margin:0; color:var(--tip-ink)}
+
+  .section{margin-top:30px; border-top:1px solid var(--rule); padding-top:18px}
+  .section h3{
+    font-family:var(--font-display); font-weight:700; font-size:15px;
+    margin:0 0 12px; letter-spacing:.01em;
+  }
+  .notes{
+    display:grid; grid-template-columns:1fr 1fr; gap:12px 26px;
+    margin:0; padding:0; list-style:none;
+  }
+  .notes li{position:relative; padding-left:18px; font-size:13.5px}
+  .notes li::before{
+    content:""; position:absolute; left:0; top:.55em; width:7px; height:7px;
+    border-radius:50%; background:var(--accent);
+  }
+  .notes b{font-weight:600}
+  .notes .muted{color:var(--muted)}
+
+  .setup{
+    background:var(--accent-soft); border-radius:11px; padding:14px 18px;
+    font-size:13px; color:var(--muted);
+  }
+  .setup ol{margin:8px 0 0; padding-left:20px}
+  .setup li{margin:4px 0}
+  .setup code{
+    font-family:var(--font-mono); font-size:12px; color:var(--accent-ink);
+    background:var(--panel); border:1px solid var(--rule); border-radius:5px;
+    padding:1px 5px;
+  }
+
+  footer{
+    margin-top:26px; text-align:center; font-size:12px; color:var(--muted);
+    font-family:var(--font-mono); letter-spacing:.03em;
+  }
+
+  @media (max-width:520px){
+    h1{font-size:27px}
+    .notes{grid-template-columns:1fr}
+    .step{padding:16px}
+  }
+
+  @media print{
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    @page{margin:13mm}
+    body{background:#fff; padding:0; font-size:10.6pt}
+    .no-print{display:none !important}
+    .step,.tip{box-shadow:none}
+    .section{margin-top:20px; padding-top:14px}
+    .steps{gap:10px}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="top">
+    <div>
+      <p class="eyebrow">aax2text · quick card</p>
+      <h1>Turn an audiobook into text</h1>
+      <p class="lede">Three steps to convert an <b>.m4b</b> (or .mp3 / .m4a) that plays in VLC into a readable text file — right on your own PC.</p>
+    </div>
+    <div class="controls no-print">
+      <button class="btn" id="print" type="button">Print / Save PDF</button>
+      <button class="btn" id="theme" type="button" aria-label="Switch theme">Theme</button>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <div>
+        <h2>Get the latest version</h2>
+        <p>Open <b>PowerShell</b> (Start button → type <i>PowerShell</i> → Enter). Paste these two lines, pressing Enter after each:</p>
+        <div class="cmd">cd "C:\Users\ken77\Ken\[] BUSINESS IDEAS\28 Claude Coding Project\Audible To Text"
+git pull</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <div>
+        <h2>Convert your audiobook</h2>
+        <p>Type this much — <b>with a space at the end</b> — but don’t press Enter yet:</p>
+        <div class="cmd">python -m aax2text.cli convert </div>
+        <div class="tip">
+          <span class="tag">◆ The trick that saves typing</span>
+          <p>Drag your <b>.m4b</b> file from File Explorer straight into the PowerShell window. It fills in the long file path for you automatically.</p>
+        </div>
+        <p>Then type the rest and press Enter:</p>
+        <div class="cmd"> --model small --out .\out</div>
+        <p class="hint">All together, the finished line looks like this:</p>
+        <div class="cmd wrap">python -m aax2text.cli convert "…\Nonviolent Communication [B072LG72D3]\book.m4b" --model small --out .\out</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <div>
+        <h2>Open your text file</h2>
+        <p>It works for a while (a progress bar shows how it’s going). When it finishes, your transcript — split by chapter — is waiting here:</p>
+        <div class="path">C:\…\Audible To Text\out\Nonviolent Communication.txt</div>
+        <p class="hint">Open it in Notepad, Word, or anything else.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Good to know</h3>
+    <ul class="notes">
+      <li><b>VLC yes, Media Player no?</b> <span class="muted">That’s normal — Windows Media Player just can’t read this file type. It does <b>not</b> mean it’s locked.</span></li>
+      <li><b>Only opens in the Audible app?</b> <span class="muted">Then it <i>is</i> still locked — unlock it first (the AAX steps in the README).</span></li>
+      <li><b>First run needs internet</b> <span class="muted">for a few minutes to download a small “listening” helper. After that it runs offline.</span></li>
+      <li><b>Rather click than type?</b> <span class="muted">Run <code style="font-family:var(--font-mono)">python -m aax2text.cli gui</code> to do it all in your browser.</span></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>First-time setup <span style="color:var(--muted); font-weight:400; font-family:var(--font-body); font-size:13px">— you’ve already done this once</span></h3>
+    <div class="setup">
+      If you ever start fresh on another PC, install these first (each is a one-time step):
+      <ol>
+        <li>Install <b>Python</b> from python.org — tick <b>“Add Python to PATH”</b> during install.</li>
+        <li>Install <b>FFmpeg</b>: <code>winget install Gyan.FFmpeg</code></li>
+        <li>Download the program: <code>git clone -b claude/aax-text-transcription-6p72vy https://github.com/ken8522/audible.git "…\Audible To Text"</code></li>
+        <li>Install its helpers (from that folder): <code>pip install -e ".[gui]"</code></li>
+      </ol>
+    </div>
+  </div>
+
+  <footer>For audiobooks you own · nothing is uploaded — your files stay on your computer</footer>
+</div>
+
+<script>
+  (function(){
+    var root = document.documentElement;
+    var btn = document.getElementById("theme");
+    var KEY = "a2t-theme";
+    function saved(){ try{ return localStorage.getItem(KEY); }catch(e){ return null; } }
+    function apply(t){ if(t){ root.setAttribute("data-theme", t); } }
+    apply(saved());
+    btn.addEventListener("click", function(){
+      var cur = root.getAttribute("data-theme");
+      if(!cur){
+        cur = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      var next = cur === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try{ localStorage.setItem(KEY, next); }catch(e){}
+    });
+    document.getElementById("print").addEventListener("click", function(){ window.print(); });
+  })();
+</script>
+</body>
+</html>

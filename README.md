@@ -16,6 +16,9 @@ It runs a four-stage pipeline, entirely on your own machine:
 > accessibility. Don't use it on files you don't own or to redistribute copyrighted
 > content.
 
+> 🔰 **New to this?** Open **`CHEAT_SHEET.html`** (in this folder — double-click it) for a
+> one-page, plain-language walkthrough you can print or save as PDF.
+
 ---
 
 ## Getting the code onto your computer
