@@ -180,8 +180,9 @@
       <div>
         <h2>Get the latest version</h2>
         <p>Open <b>PowerShell</b> (Start button → type <i>PowerShell</i> → Enter). Paste these two lines, pressing Enter after each:</p>
-        <div class="cmd">cd "C:\Users\ken77\Ken\[] BUSINESS IDEAS\28 Claude Coding Project\Audible To Text"
+        <div class="cmd wrap">cd -LiteralPath "C:\Users\ken77\Ken\[] BUSINESS IDEAS\28 Claude Coding Project\Audible To Text"
 git pull</div>
+        <p class="hint">Keep the <b>-LiteralPath</b> part — without it, PowerShell misreads the <b>[]</b> in your folder name.</p>
       </div>
     </div>
 
