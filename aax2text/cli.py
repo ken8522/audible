@@ -75,6 +75,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="comma-separated: txt,srt,vtt,json (default: txt)")
     c.add_argument("--clean", action="store_true", help="delete the intermediate .m4b")
     c.add_argument("--overwrite", action="store_true", help="redo stages even if outputs exist")
+    c.add_argument("--preview", type=float, metavar="MIN",
+                   help="quick test: only transcribe the first MIN minutes")
 
     # checksum
     ck = sub.add_parser("checksum", help="print the DRM checksum of an .aax file")
@@ -106,6 +108,8 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
     t.add_argument("--language")
     t.add_argument("--format", type=_parse_formats, default=("txt",))
+    t.add_argument("--preview", type=float, metavar="MIN",
+                   help="quick test: only transcribe the first MIN minutes")
 
     # gui
     g = sub.add_parser("gui", help="launch the local browser GUI")
@@ -132,6 +136,7 @@ def _cmd_convert(args) -> int:
         formats=args.format,
         keep_intermediate=not args.clean,
         overwrite=args.overwrite,
+        preview_minutes=args.preview,
         status=_status,
         transcribe_progress=_make_transcribe_progress(),
     )
@@ -205,6 +210,7 @@ def _cmd_transcribe(args) -> int:
     tr = transcribe.transcribe_file(
         args.input, model_size=args.model, device=args.device, language=args.language,
         progress=_make_transcribe_progress(),
+        limit_seconds=(args.preview * 60) if args.preview else None,
     )
     outputs = transcribe.write_outputs(
         tr, out_base, formats=args.format,

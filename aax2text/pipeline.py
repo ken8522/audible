@@ -53,6 +53,7 @@ def convert(
     formats: tuple[str, ...] = ("txt",),
     keep_intermediate: bool = True,
     overwrite: bool = False,
+    preview_minutes: Optional[float] = None,
     status: Optional[StatusCB] = None,
     crack_progress: Optional[crack.ProgressCB] = None,
     transcribe_progress: Optional[transcribe.ProgressCB] = None,
@@ -115,18 +116,24 @@ def convert(
         status("No DRM detected; transcribing the file directly.")
 
     # 3. Transcribe --------------------------------------------------------- #
-    out_base = os.path.join(out_dir, base)
+    # A preview writes to its own file so it never blocks (or gets skipped by) the
+    # full run's resumable check.
+    label = base if not preview_minutes else f"{base} (preview {int(preview_minutes)}min)"
+    out_base = os.path.join(out_dir, label)
     txt_path = out_base + ".txt"
     if os.path.isfile(txt_path) and not overwrite:
         status(f"Transcript already exists, skipping transcription: {txt_path}")
         result.outputs = [txt_path]
         return result
 
+    if preview_minutes:
+        status(f"Preview mode: transcribing only the first {preview_minutes:g} minute(s).")
     status(f"Transcribing with faster-whisper ({model_size})… this is the slow part.")
     try:
         tr = transcribe.transcribe_file(
             media_path, model_size=model_size, device=device, language=language,
             progress=transcribe_progress,
+            limit_seconds=(preview_minutes * 60) if preview_minutes else None,
         )
     except (FileNotFoundError, RuntimeError):
         # Clear, actionable messages (missing file / faster-whisper not installed) pass through.

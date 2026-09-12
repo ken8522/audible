@@ -109,6 +109,36 @@ def test_transcribe_file_glue_with_stub_model(tmp_path, monkeypatch):
     assert progress and progress[-1] == (6.0, 6.0)
 
 
+def test_transcribe_file_preview_limit(tmp_path, monkeypatch):
+    """limit_seconds stops transcription early (preview of a long file)."""
+    faster_whisper = pytest.importorskip("faster_whisper")
+
+    class _Seg:
+        def __init__(self, s, e, t):
+            self.start, self.end, self.text = s, e, t
+
+    class _Info:
+        duration = 3600.0  # a long "book"
+        language = "en"
+
+    class _Model:
+        def __init__(self, *a, **k):
+            pass
+
+        def transcribe(self, audio, **kwargs):
+            return iter([_Seg(0, 60, "one"), _Seg(60, 120, "two"),
+                         _Seg(120, 180, "three")]), _Info()
+
+    monkeypatch.setattr(faster_whisper, "WhisperModel", _Model)
+    audio = tmp_path / "a.wav"
+    audio.write_bytes(b"x")
+
+    result = transcribe.transcribe_file(str(audio), model_size="tiny", device="cpu",
+                                        limit_seconds=120)
+    # Segment ending at 120 is included; the one starting after is not.
+    assert [s.text for s in result.segments] == ["one", "two"]
+
+
 def test_bucket_by_chapter_edges():
     chapters = [Chapter(0, 0.0, 5.0, "One"), Chapter(1, 5.0, 10.0, "Two")]
     segs = [Segment(0.0, 1.0, "a"), Segment(4.9, 5.1, "b"), Segment(9.9, 10.5, "c")]

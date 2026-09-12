@@ -49,6 +49,33 @@ def test_convert_drm_none_transcribes_directly(tmp_path, monkeypatch):
     assert "hello" in body and "world" in body
 
 
+def test_convert_preview_writes_separate_file(tmp_path, monkeypatch):
+    """Preview mode passes a limit and writes to its own file, so it can't be
+    mistaken for (or block) the full transcript."""
+    src = tmp_path / "Book.m4b"
+    src.write_bytes(b"x")
+    out = tmp_path / "out"
+    pr = ProbeResult(path=str(src), drm="none", duration=3600.0, has_audio=True,
+                     metadata={"title": "My Book"})
+    monkeypatch.setattr(probe, "probe", lambda p: pr)
+
+    seen = {}
+
+    def fake_transcribe(path, **kwargs):
+        seen["limit_seconds"] = kwargs.get("limit_seconds")
+        return TranscriptResult(language="en", duration=3600.0,
+                                segments=[Segment(0.0, 90.0, "hello")])
+
+    monkeypatch.setattr(transcribe, "transcribe_file", fake_transcribe)
+
+    res = pipeline.convert(str(src), str(out), model_size="tiny", preview_minutes=2)
+
+    assert seen["limit_seconds"] == 120
+    assert res.outputs == [os.path.join(str(out), "My Book (preview 2min).txt")]
+    # The full-run filename stays free.
+    assert not os.path.isfile(os.path.join(str(out), "My Book.txt"))
+
+
 def test_convert_friendly_error_on_decode_failure(tmp_path, monkeypatch):
     """An opaque audio-decode failure becomes a plain-English message."""
     src = tmp_path / "Book.m4b"

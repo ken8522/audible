@@ -62,8 +62,13 @@ def transcribe_file(
     beam_size: int = 5,
     download_root: Optional[str] = None,
     progress: Optional[ProgressCB] = None,
+    limit_seconds: Optional[float] = None,
 ) -> TranscriptResult:
-    """Transcribe *audio_path* and return a TranscriptResult."""
+    """Transcribe *audio_path* and return a TranscriptResult.
+
+    If *limit_seconds* is set, stop after that many seconds of audio (a quick
+    preview of the start of a long file).
+    """
     if not os.path.isfile(audio_path):
         raise FileNotFoundError(audio_path)
 
@@ -85,14 +90,18 @@ def transcribe_file(
         audio_path, language=language, vad_filter=vad, beam_size=beam_size,
     )
     total = float(getattr(info, "duration", 0.0) or 0.0)
+    # For a preview, progress is measured against the shorter target.
+    prog_total = min(total, limit_seconds) if (limit_seconds and total) else total
 
     result = TranscriptResult(language=getattr(info, "language", "") or "", duration=total)
     for seg in segments_iter:
         result.segments.append(Segment(start=seg.start, end=seg.end, text=seg.text.strip()))
-        if progress and total:
-            progress(min(seg.end, total), total)
-    if progress and total:
-        progress(total, total)
+        if progress and prog_total:
+            progress(min(seg.end, prog_total), prog_total)
+        if limit_seconds is not None and seg.end >= limit_seconds:
+            break  # preview: stop once we've covered the requested span
+    if progress and prog_total:
+        progress(prog_total, prog_total)
     return result
 
 
