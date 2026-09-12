@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud Transcription Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#FBFCFD; --panel:#FFFFFF; --ink:#14181D; --muted:#5C6773;
+    --accent:#1F5FA6; --accent-ink:#0E3E70; --accent-soft:#E7F0FA;
+    --rule:#DCE3EB; --code-bg:#F1F5F9; --code-ink:#1B2530; --code-rule:#CBD6E2;
+    --tip-bg:#FBF1D6; --tip-rule:#E7CD84; --tip-ink:#4A3A12; --tip-label:#8A6A16;
+    --shadow:0 1px 2px rgba(20,24,29,.05), 0 10px 26px rgba(20,24,29,.05);
+    --font-display:"Bricolage Grotesque",system-ui,sans-serif;
+    --font-body:"IBM Plex Sans",system-ui,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,"Cascadia Code",Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0F1318; --panel:#161C23; --ink:#E8EDF3; --muted:#98A4B0;
+      --accent:#6FA8E6; --accent-ink:#BBD8F6; --accent-soft:#182838;
+      --rule:#2A323C; --code-bg:#0C1117; --code-ink:#D6E2EF; --code-rule:#28313C;
+      --tip-bg:#2A2410; --tip-rule:#5A4A1E; --tip-ink:#EBDBAA; --tip-label:#C9A94E;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0F1318; --panel:#161C23; --ink:#E8EDF3; --muted:#98A4B0;
+    --accent:#6FA8E6; --accent-ink:#BBD8F6; --accent-soft:#182838;
+    --rule:#2A323C; --code-bg:#0C1117; --code-ink:#D6E2EF; --code-rule:#28313C;
+    --tip-bg:#2A2410; --tip-rule:#5A4A1E; --tip-ink:#EBDBAA; --tip-label:#C9A94E;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 30px rgba(0,0,0,.35);
+  }
+
+  html{color-scheme:light dark}
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--font-body); font-size:15px; line-height:1.5;
+    padding:32px 18px 44px;
+  }
+  .sheet{max-width:760px; margin:0 auto}
+
+  .top{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    gap:16px; flex-wrap:wrap; margin-bottom:20px;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); font-weight:600; margin:0 0 6px;
+  }
+  h1{
+    font-family:var(--font-display); font-weight:800; font-size:31px;
+    line-height:1.05; letter-spacing:-.015em; margin:0; text-wrap:balance;
+  }
+  .lede{color:var(--muted); margin:8px 0 0; max-width:54ch}
+  .controls{display:flex; gap:8px; flex-shrink:0}
+  .btn{
+    font:inherit; font-size:13px; font-weight:500; color:var(--ink);
+    background:var(--panel); border:1px solid var(--rule); border-radius:9px;
+    padding:7px 12px; cursor:pointer; line-height:1;
+  }
+  .btn:hover{border-color:var(--accent)}
+  .btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .need{
+    background:var(--accent-soft); border-radius:11px; padding:12px 16px;
+    margin-bottom:20px; font-size:13.5px;
+  }
+  .need b{font-weight:600}
+  .need .row{display:flex; gap:22px; flex-wrap:wrap; margin-top:4px}
+
+  .steps{display:flex; flex-direction:column; gap:13px}
+  .step{
+    display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:start;
+    background:var(--panel); border:1px solid var(--rule); border-radius:14px;
+    padding:16px 20px; box-shadow:var(--shadow); break-inside:avoid;
+  }
+  .num{
+    font-family:var(--font-display); font-weight:800; font-size:16px;
+    width:32px; height:32px; border-radius:50%;
+    background:var(--accent); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .step h2{
+    font-family:var(--font-display); font-weight:700; font-size:17px;
+    margin:3px 0 0; letter-spacing:-.01em;
+  }
+  .step p{margin:7px 0 0}
+  .step p.hint{color:var(--muted); font-size:13px}
+  .menu{
+    font-family:var(--font-mono); font-size:12.5px; color:var(--accent-ink);
+    background:var(--accent-soft); border-radius:7px; padding:3px 7px; white-space:nowrap;
+  }
+
+  .tip{
+    margin-top:10px; background:var(--tip-bg); border:1px solid var(--tip-rule);
+    border-radius:11px; padding:12px 15px;
+  }
+  .tip .tag{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:.13em;
+    text-transform:uppercase; font-weight:600; color:var(--tip-label);
+    display:block; margin-bottom:3px;
+  }
+  .tip p{margin:0; color:var(--tip-ink)}
+
+  .section{margin-top:28px; border-top:1px solid var(--rule); padding-top:18px}
+  .section h3{
+    font-family:var(--font-display); font-weight:700; font-size:15px;
+    margin:0 0 12px; letter-spacing:.01em;
+  }
+  .notes{
+    display:grid; grid-template-columns:1fr 1fr; gap:12px 26px;
+    margin:0; padding:0; list-style:none;
+  }
+  .notes li{position:relative; padding-left:18px; font-size:13.5px}
+  .notes li::before{
+    content:""; position:absolute; left:0; top:.55em; width:7px; height:7px;
+    border-radius:50%; background:var(--accent);
+  }
+  .notes b{font-weight:600}
+  .notes .muted{color:var(--muted)}
+  .notes code{
+    font-family:var(--font-mono); font-size:12px; color:var(--accent-ink);
+    background:var(--accent-soft); border-radius:5px; padding:1px 5px;
+  }
+
+  footer{
+    margin-top:26px; text-align:center; font-size:12px; color:var(--muted);
+    font-family:var(--font-mono); letter-spacing:.03em;
+  }
+
+  @media (max-width:520px){
+    h1{font-size:26px}
+    .notes{grid-template-columns:1fr}
+    .step{padding:15px}
+  }
+  @media print{
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    @page{margin:12mm}
+    body{background:#fff; padding:0; font-size:10.5pt}
+    .no-print{display:none !important}
+    .step,.tip{box-shadow:none}
+    .section{margin-top:18px; padding-top:12px}
+    .steps{gap:9px}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="top">
+    <div>
+      <p class="eyebrow">aax2text · cloud guide</p>
+      <h1>Audiobook → text, in the cloud</h1>
+      <p class="lede">Use Google Colab — a free Google website that lends you a fast computer — to turn your audiobook into text in <b>minutes</b>, without tying up your own PC.</p>
+    </div>
+    <div class="controls no-print">
+      <button class="btn" id="print" type="button">Print / Save PDF</button>
+      <button class="btn" id="theme" type="button" aria-label="Switch theme">Theme</button>
+    </div>
+  </div>
+
+  <div class="need">
+    <b>What you need (all free):</b>
+    <div class="row">
+      <span>• A <b>Google account</b> (the same one you use for Gmail)</span>
+      <span>• The file <b>audiobook_to_text_colab.ipynb</b> (in this folder)</span>
+      <span>• Your audiobook <b>.m4b</b> file</span>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <div>
+        <h2>Open Google Colab and sign in</h2>
+        <p>In your web browser, go to <b>colab.research.google.com</b> and sign in with your Google account.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <div>
+        <h2>Open the notebook</h2>
+        <p>Click <span class="menu">File → Upload notebook</span>, then choose <b>audiobook_to_text_colab.ipynb</b> from this folder. A page full of labelled steps opens.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <div>
+        <h2>Turn on the free fast chip</h2>
+        <p>Click <span class="menu">Runtime → Change runtime type</span>, pick <b>T4 GPU</b>, and click <b>Save</b>.</p>
+        <div class="tip">
+          <span class="tag">◆ Don't skip this — it's what makes it fast</span>
+          <p>The <b>GPU</b> is the fast chip that turns 5 hours of audio into a few minutes of work. Without it, the notebook still runs but crawls.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">4</div>
+      <div>
+        <h2>Run the steps one at a time</h2>
+        <p>Click the round <b>▶ (play)</b> button on the left of the first cell, wait for it to finish, then do the next one, top to bottom. They will, in order:</p>
+        <p class="hint">check the fast chip → install the transcriber → let you <b>upload your .m4b</b> (click “Choose Files”) → transcribe it (watch the % climb) → <b>download your text file</b>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">5</div>
+      <div>
+        <h2>Get your text file</h2>
+        <p>When the last step runs, a <b>.txt</b> file saves to your computer’s <b>Downloads</b> folder — split by chapter. Open it in Notepad or Word. Done! 🎉</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Good to know</h3>
+    <ul class="notes">
+      <li><b>How long?</b> <span class="muted">On the free GPU, a 5-hour book takes roughly a few minutes.</span></li>
+      <li><b>Keep the tab open</b> <span class="muted">until it finishes. Closing it disconnects the cloud computer.</span></li>
+      <li><b>Big file won’t upload?</b> <span class="muted">Use the “Google Drive” cell in the notebook instead of “Choose Files”.</span></li>
+      <li><b>Want better wording?</b> <span class="muted">In the transcribe step, change <code>MODEL = 'small'</code> to <code>'medium'</code>.</span></li>
+      <li><b>Privacy</b> <span class="muted">— this sends your audio to Google to do the work. Want nothing to leave your PC? Use the desktop version (see <b>CHEAT_SHEET.html</b>).</span></li>
+      <li><b>A red error?</b> <span class="muted">Re-read the note above that cell — usually it’s the GPU (Step 3) not turned on.</span></li>
+    </ul>
+  </div>
+
+  <footer>For audiobooks you own · the free desktop version keeps everything on your computer</footer>
+</div>
+
+<script>
+  (function(){
+    var root = document.documentElement;
+    var btn = document.getElementById("theme");
+    var KEY = "a2t-cloud-theme";
+    function saved(){ try{ return localStorage.getItem(KEY); }catch(e){ return null; } }
+    if(saved()){ root.setAttribute("data-theme", saved()); }
+    btn.addEventListener("click", function(){
+      var cur = root.getAttribute("data-theme");
+      if(!cur){ cur = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }
+      var next = cur === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try{ localStorage.setItem(KEY, next); }catch(e){}
+    });
+    document.getElementById("print").addEventListener("click", function(){ window.print(); });
+  })();
+</script>
+</body>
+</html>
